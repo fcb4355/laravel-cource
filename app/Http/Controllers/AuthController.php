@@ -50,7 +50,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($validated)) {
             $request->session()->regenerate();
-            return redirect('/')->with('success', 'Login successfully');
+            return redirect('/notes')->with('success', 'Login successfully');
         } else {
             return redirect('/login')->with('error', 'Email or password not correct');
         }
