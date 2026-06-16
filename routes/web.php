@@ -10,15 +10,6 @@ Route::view('/', "welcome");
 Route::view('/about', "about");
 Route::view('/contact', "contact");
 
-
-// Route::get('/notes', [NoteController::class, 'index']);
-// Route::get('/notes/create', [NoteController::class, 'create']);
-// Route::post('/notes', [NoteController::class, 'store']);
-// Route::get('/notes/{id}', [NoteController::class, 'show'])->whereNumber('id');
-// Route::get('/notes/{id}/edit', [NoteController::class, 'edit'])->whereNumber('id');
-// Route::patch('/notes/{id}', [NoteController::class, 'update'])->whereNumber('id');
-// Route::delete('/notes/{id}', [NoteController::class, 'destroy'])->whereNumber('id');
-
 Route::resource('/notes', NoteController::class);
 
 Route::delete('/notes', DestroyNotesController::class); // Destroy All Notes.
