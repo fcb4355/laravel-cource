@@ -1,0 +1,368 @@
+╔════════════════════════════════════════════════════════════════╗
+║                   🎓 LARAVEL COURSE NOTES 🎓                  ║
+╚════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗ Installation Laravel. ❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1 - laravel new projectName.
+
+TABLE OF CONTENTS
+1. MVC Architecture
+2. Routes
+3. Controllers
+4. Migrations
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1️⃣ MVC ARCHITECTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🗄️ MODEL (M):
+    • يتواصل مع قاعدة البيانات
+    • يتعامل مع عمليات (ADD - EDIT - DELETE)
+
+🎮 CONTROLLER (C):
+    • يربط بين Model و View
+    • يستقبل الطلبات من المستخدم
+    • يرسل البيانات للـ Model ويعيد النتيجة للـ View
+
+🎨 VIEW (V):
+    • يعرض البيانات للمستخدم
+    • لا يحتوي على منطق برمجي
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2️⃣ ROUTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 HTTP METHODS:
+    ↓ Route::get()     → عرض صفحة أو بيانات
+    ↑ Route::post()    → إرسال بيانات من المستخدم
+    ⟲ Route::put()     → تحديث بيانات كاملة
+    ✕ Route::delete()  → حذف البيانات
+    ◐ Route::patch()   → تحديث جزء من البيانات
+
+🔧 ROUTE HELPERS:
+    ├─ Route::prefix()   → تجميع عدة Routes تحت مسار واحد
+    └─ Route::fallback() → صفحة 404 عند عدم العثور على الطلب
+
+--- BASIC EXAMPLES ---
+
+[1] ✨ Show String:
+     Route::get('/', function () {
+          return 'welcome';
+     });
+
+[2] 📄 Show View without Data:
+     Route::get('/users', function () {
+          return view('users');
+     });
+
+[3] 📊 Show View with Data:
+     Route::get('/users', function () {
+          $users = ['Ahmed', 'Mohamed', 'Ali'];
+          return view('users', ['users' => $users]);
+     });
+     *Alt: return view('users')->with('users', $users);
+
+[4] 🔗 Direct View Route:
+     Route::view('/users', 'users');
+
+--- PARAMETER EXAMPLES ---
+
+[5] 🆔 Required Parameter:
+     Route::get('/users/{id}', function ($id) {
+          return 'User ID: ' . $id;
+     });
+
+[6] 📌 Parameter with View:
+    *Get parameter from route and pass it to view => http://localhost:8000/users/5
+     Route::get('/users/{id}', function ($id) {
+          return view('user', ['id' => $id]);
+     });
+
+     *Get parameter from request with default value if not provided => http://localhost:8000/users?id=5
+     Route::get('/users', function () {
+          return view('user' , ['id' => request('id' , 'default value')] );
+     });
+     Note: Use {{ $id }} in view to get parameter
+
+[7] ❓ Optional Parameter:
+     Route::get('/users/{id?}', function ($id = null) {
+          return 'User ID: ' . $id;
+     });
+
+--- GROUP EXAMPLES ---
+
+[8] 📁 Prefix Routes (Group):
+     Route::prefix('admin')->group(function () {
+          Route::get('/dashboard', function () {
+                return 'Admin Dashboard';
+          });
+          Route::get('/users', function () {
+                return 'Admin Users';
+          });
+          Route::get('/settings', function () {
+                return 'Admin Settings';
+          });
+     });
+
+[9] ⚠️ Fallback (404 Page):
+     Route::fallback(function () {
+          return view('404');
+     });
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3️⃣ CONTROLLERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 CREATING CONTROLLERS:
+     php artisan make:controller NameController
+
+     Types:
+     ├─ Empty: php artisan make:controller NameController
+     ├─ Resource: php artisan make:controller NameController --resource
+     ├─ Invokable: php artisan make:controller NameController --invokable
+     └─ API: php artisan make:controller NameController --api
+
+--- ROUTING TO CONTROLLERS ---
+
+[1] Basic Controller Method:
+     Route::get('/users', [UserController::class, 'index']);
+
+[2] Group Routes to Controller:
+     Route::controller(UserController::class)->group(function () {
+          Route::get('/users', 'index');
+          Route::get('/users/{id}', 'show');
+     });
+
+[3] Constructor Method:
+     class UserController extends Controller
+     {
+          public function __construct()
+          {
+                ** Runs before any method in controller
+                ** Use for: Middleware, shared data, etc.
+          }
+     }
+
+[4] Invokable Controller:
+
+    public function __invoke()
+    {
+        ** Handles single action when controller is called
+    }
+
+     Route::get('/users', UserController::class);
+     * Calls __invoke() method in controller
+     * Single method to handle the request
+
+[5] Resource Controller:
+     Route::resource('users', UserController::class);
+
+     Routes Created:
+     GET    /users           → index()   (show all)
+     GET    /users/create    → create()  (show create form)
+     POST   /users           → store()   (save to database)
+     GET    /users/{id}      → show()    (show single)
+     GET    /users/{id}/edit → edit()    (show edit form)
+     PUT    /users/{id}      → update()  (update database)
+     DELETE /users/{id}      → destroy() (delete)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4️⃣ MIGRATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+To Create table Migration:
+    *** php artisan make:migration create_name_table
+
+To Create column migration:
+    *** php artisan make:migration add_columnName_to_tableName --table=tableName
+
+To Create index migration:
+    *** php artisan make:migration add_indexName_to_tableName --table=tableName
+
+To Create foreign key migration:
+    *** php artisan make:migration add_foreignKeyName_to_tableName --table=tableName
+
+To Run Migrations:
+    *** php artisan migrate
+
+To Rollback Migrations:
+    *** php artisan migrate:rollback
+
+To Reset Migrations (Drop All):
+    *** php artisan migrate:reset
+
+To Refresh Migrations (Drop and Recreate):
+    *** php artisan migrate:refresh
+
+To Fresh Migrations (Drop All and Migrate):
+    *** php artisan migrate:fresh
+
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5️⃣ MODELS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+To Created Model:
+    *** php artisan make:model ModelName
+To Create Model with Migration:
+    *** php artisan make:model ModelName -m
+To Create Model With Controller:
+    *** php artisan make:model ModelName -c
+To Create Model With Factory:
+    *** php artisan make:model ModelName -f
+To Create Model With All:
+    *** php artisan make:model ModelName -mcf
+To Show Model Details:
+    *** php artisan model:show ModelName
+    *** Shows model properties, relationships, etc.
+
+
+!! To Get Rows from Database:
+
+    ?? 1- Query Builder:
+    ** Get All Rows:
+    $rows = DB::table('tableName')->get();
+
+    ** Get First Row:
+    $row = DB::table('tableName')->first();
+
+    ** Get Row with Condition
+    $rows = DB::table('tableName')
+        ->select('column' , 'column') // can Select specified column
+        ->where('column' , 'condition' , 'value') // Can Add More of (Where) Conditions | Or Where: ->orWhere('column' , 'condition' , 'value')
+        ->get() | first()
+
+    ** Aggregate Functions:
+    count() → Get number of rows
+    min('column') → Get minimum value of column
+    max('column') → Get maximum value of column
+    avg('column') → Get average value of column
+    sum('column') → Get sum of column
+
+    ?? 2- Eloquent ORM:
+    $models = ModelName::all(); // Get All Rows
+    $model = ModelName::select('column' , 'column') // can Select specified column.
+        ->where('column' , 'condition' , 'value')
+        ->orWhere('column' , 'condition' , 'value')
+        ->get() | first()
+    ** Eloquent also supports aggregate functions like count(), min(), max(), avg(), sum().
+    $model = ModelName::find(id); // Get Row by Primary Key (id)
+    $model = ModelName::findOrFail(id); // Get Row by Primary Key (id) or throw 404 error if not found
+    $model = ModelName::where('column' , 'condition' , 'value')->get(); // Get Row with condition or throw 404 error if not found
+    $model = ModelName::where('column' , 'condition' , 'value')->firstOrFail(); // Get First Row with condition or throw 404 error if not found
+    $model = ModelName::where('column' , 'condition' , 'value')->first(); // Get First Row with condition or return null if not found
+    $model = ModelName::whereAny('column' , ['value1' , 'value2'])->get(); // Get Rows where column value matches any of the specified values
+    $model = ModelName::whereIn('column' , ['value1' , 'value2'])->get(); // Get Rows where column value is in the specified array
+    $model = ModelName::whereNotIn('column' , ['value1' , 'value2'])->get(); // Get Rows where column value is not in the specified array
+    $model = ModelName::whereBetween('column' , [value1 , value2])->get(); // Get Rows where column value is between the specified range
+    $model = ModelName::whereNull('column')->get(); // Get Rows where column value is null
+    $model = ModelName::whereNotNull('column')->get(); // Get Rows where column value is not null
+    $model = ModelName::whereDate('column' , 'condition' , 'value')->get(); // Get Rows where column date value matches the specified condition
+    $model = ModelName::whereMonth('column' , 'condition' , 'value')->get(); // Get Rows where column month value matches the specified condition
+    $model = ModelName::whereYear('column' , 'condition' , 'value')->get(); // Get Rows where column year value matches the specified condition
+    $model = ModelName::whereTime('column' , 'condition' , 'value')->get(); // Get Rows where column time value matches the specified condition
+
+!! To Create Row in Database:
+
+    ?? 1- Query Builder:
+    DB::table('tableName')->insert([
+        'column1' => 'value1',
+        'column2' => 'value2',
+    ]);
+    ** Note: Can insert multiple rows by passing an array of arrays
+
+    ?? 2- Eloquent ORM:
+
+    ModelName::create([
+        'column1' => 'value1',
+        'column2' => 'value2',
+    ]);
+    ** Note: Make sure to add `protected $fillable = ['column1', 'column2'];` in model to allow mass assignment
+
+    ** Alternative way to create row using Eloquent:
+    $model = new ModelName();
+    $model->column1 = 'value1';
+    $model->column2 = 'value2';
+    $model->save();
+
+
+!! To Update Row in Database:
+
+    ?? 1- Eloquent ORM (Recommended):
+    $model = ModelName::find(id); | findOrFail(id);
+    $model->column1 = 'new value';
+    $model->save();
+
+    ?? 2- Query Builder:
+    DB::table('tableName')->where('id', id)->update([
+        'column1' => 'new value',
+        'updated_at' => now() // Don't forget to update timestamp if using timestamps
+        'updated_at' => time() // If using timestamps but not Carbon
+    ]);
+
+    DB::table('tableName')->where('age' , 20)->increment('age' , 1); // Increment age by 1 for all students younger than 20 years old.
+    DB::table('tableName')->where('age' , 20)->decrement('age' , 1); // Decrement age by 1 for all students younger than 20 years old.
+
+!! To Delete Row in Database:
+
+    ?? 1- Eloquent ORM (Recommended):
+    $model = ModelName::find(id); | findOrFail(id);
+    $model->delete();
+
+    ?? 2- Query Builder:
+    DB::table('tableName')->where('id', id)->delete();
+
+    ?? 3- Soft Deletes (Eloquent ORM):
+    ** Enable Soft Deletes:
+    - Add `use SoftDeletes`; in model
+    - Add `use Illuminate\Database\Eloquent\SoftDeletes;` at the top of model
+    - Add `protected $dates = ['deleted_at'];` in model
+    - Add `deleted_at` column in migration (use `$table->softDeletes();`)
+    ** Soft Delete Row:
+    $model = ModelName::find(id); | findOrFail(id);
+    $model->delete(); // This will set deleted_at timestamp instead of deleting the row
+    ** Restore Soft Deleted Row:
+    $model = ModelName::withTrashed()->find(id); | findOrFail(id);
+    $model->restore(); // This will set deleted_at to null and restore the row
+    ** Force Delete Row:
+    $model = ModelName::withTrashed()->find(id); | findOrFail(id);
+    $model->forceDelete(); // This will permanently delete the row from database
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6️⃣ FACTORIES & SEEDERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+To Create Factory:
+    *** php artisan make:factory ModelNameFactory --model=ModelName
+
+Factory Example:
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'password' => bcrypt('password'),
+        ];
+    }
+
+To Create Seeder:
+    *** php artisan make:seeder ModelNameSeeder
+
+Seeder Example:
+    public function run()
+    {
+        ModelName::factory()->count(50)->create();
+    }
+
+To run Seeder;
+    *** php artisan db:seed
+To Run Seeder with Specific Class:
+    *** php artisan db:seed --class=ModelNameSeeder
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7️⃣ Searching & Filtering Data
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -1,0 +1,47 @@
+@import "tailwindcss";
+@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
+@source "../../storage/framework/views/*.php";
+@source "../**/*.blade.php";
+@source "../**/*.js";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+.toast-animate-in {
+    animation: toast-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.toast-animate-out {
+    animation: toast-out 0.2s ease-in forwards;
+}
+
+@keyframes toast-in {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.5);
+        filter: blur(4px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes toast-out {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.7);
+        filter: blur(4px);
+    }
+}
