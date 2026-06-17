@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\NoteRequest;
 use App\Models\Note;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class NoteController extends Controller
 {
@@ -15,15 +13,8 @@ class NoteController extends Controller
     // !!!!! Show All notes.
     public function index()
     {
-
-        $sessionId = Auth::user()->id;
-
-        $notes = Note::select('*')
-            ->where('user_id', $sessionId)
-            ->get();
-
         return view('notes.index', [
-            'notes' => $notes
+            'notes' => Auth::User()->notes
         ]);
     }
 
@@ -36,13 +27,11 @@ class NoteController extends Controller
     // !!!!! Store Note.
     public function store(NoteRequest $request)
     {
-        $sessionId = Auth::user()->id;
 
-        Note::create([
+        Auth::User()->notes()->create([
             'title' => $request->title,
             'description' => $request->description,
             'status' => $request->status,
-            'user_id' => $sessionId
         ]);
 
         return redirect('/notes')->with('success', 'Note created successfully');
@@ -72,11 +61,7 @@ class NoteController extends Controller
     public function update(NoteRequest $request, int $id)
     {
 
-        // 1- Get The Not Record By id.
-        $note = Note::findOrFail($id);
-
-        // 3- update the data of not after validation.
-        $note->update([
+        Auth::User()->notes()->update([
             'title' => $request->title,
             'description' => $request->description,
             'status' => $request->status,
@@ -90,7 +75,8 @@ class NoteController extends Controller
     // !!!!! Delete Note.
     public function destroy(int $id)
     {
-        $note = Note::findOrFail($id);
+
+        $note = Auth::User()->notes()->findOrFail($id);
 
         $note->delete();
 

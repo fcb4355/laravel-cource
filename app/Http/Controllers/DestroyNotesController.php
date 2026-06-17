@@ -13,7 +13,7 @@ class DestroyNotesController extends Controller
     public function __invoke()
     {
 
-        $deletedNotes = Note::Query()->where('user_id', Auth::user()->id)->delete();
+        $deletedNotes = Auth::User()->notes()->delete();
 
         if ($deletedNotes === 0) {
             return redirect('/notes')
