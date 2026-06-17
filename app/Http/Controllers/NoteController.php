@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\NoteRequest;
 use App\Models\Note;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class NoteController extends Controller
@@ -13,7 +15,12 @@ class NoteController extends Controller
     // !!!!! Show All notes.
     public function index()
     {
-        $notes = Note::all();
+
+        $sessionId = Auth::user()->id;
+
+        $notes = Note::select('*')
+            ->where('user_id', $sessionId)
+            ->get();
 
         return view('notes.index', [
             'notes' => $notes
@@ -29,11 +36,13 @@ class NoteController extends Controller
     // !!!!! Store Note.
     public function store(NoteRequest $request)
     {
+        $sessionId = Auth::user()->id;
 
         Note::create([
             'title' => $request->title,
             'description' => $request->description,
             'status' => $request->status,
+            'user_id' => $sessionId
         ]);
 
         return redirect('/notes')->with('success', 'Note created successfully');

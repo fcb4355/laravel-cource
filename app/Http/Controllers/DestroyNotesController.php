@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Note;
+use Illuminate\Support\Facades\Auth;
 
 class DestroyNotesController extends Controller
 {
@@ -11,16 +12,15 @@ class DestroyNotesController extends Controller
      */
     public function __invoke()
     {
-        $note = Note::all();
 
-        if ($note->count() === 0) {
-            return redirect('/notes')->with('error', 'There are no notes to delete.');
+        $deletedNotes = Note::Query()->where('user_id', Auth::user()->id)->delete();
+
+        if ($deletedNotes === 0) {
+            return redirect('/notes')
+                ->with('error', 'There are no notes to delete.');
+        } else {
+            return redirect('/notes')
+                ->with('success', 'All notes deleted successfully');
         }
-
-        Note::query()->delete();
-
-        return redirect('/notes')
-            ->with('success', 'All notes deleted successfully')
-            ->with('warning', 'No have any notes.');
     }
 }
