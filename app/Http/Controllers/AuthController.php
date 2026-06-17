@@ -37,7 +37,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect('/notes')->with('success', 'User created succussfully');
+        return redirect('/notes')->with('success', 'Welcome ' . Auth::User()->name);
     }
 
     // Handler Login
@@ -50,7 +50,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($validated)) {
             $request->session()->regenerate();
-            return redirect('/notes')->with('success', 'Login successfully');
+            return redirect('/notes')->with('success', 'Welcome ' . Auth::User()->name);
         } else {
             return redirect('/login')->with('error', 'Email or password not correct');
         }

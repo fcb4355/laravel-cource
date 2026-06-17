@@ -56,12 +56,25 @@
 
                     <!-- Auth -->
                     @auth
-                        <form method="POST" action="/logout">
-                            @csrf
-                            @method('delete')
-                            <button type="submit"
-                                class="rounded-md bg-red-500 px-5 py-1.5 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 inline-block">Logout</button>
-                        </form>
+                        <div class="flex items-center gap-2">
+                            <div
+                                class="rounded-md bg-gray-700 px-5 py-1.5 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-700 flex items-center gap-2">
+                                <svg class="size-4 inline-block" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z">
+                                    </path>
+                                </svg>
+                                {{ Auth::user()->name }}
+                            </div>
+
+                            <form method="POST" action="/logout">
+                                @csrf
+                                @method('delete')
+                                <button type="submit"
+                                    class="rounded-md bg-red-500 px-5 py-1.5 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 inline-block">Logout</button>
+                            </form>
+                        </div>
                     @else
                         <div class="flex items-center gap-2">
                             <x-nav-link href="/login" :active="request()->is('login')">Login</x-nav-link>
