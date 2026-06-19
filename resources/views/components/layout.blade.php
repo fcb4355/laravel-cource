@@ -31,7 +31,13 @@
                                 <x-nav-link href="/" :active="request()->is('/')">Home</x-nav-link>
                                 <x-nav-link href="/about" :active="request()->is('about')">About</x-nav-link>
                                 <x-nav-link href="/contact" :active="request()->is('contact')">Contact</x-nav-link>
-                                <x-nav-link href="/notes" :active="request()->is('notes')">Notes</x-nav-link>
+
+                                @auth
+                                    <x-nav-link href="/notes" :active="request()->is('notes')">Notes</x-nav-link>
+                                    @can('admin-view')
+                                        <x-nav-link href="/dashboard" :active="request()->is('dashboard')">Dashboard</x-nav-link>
+                                    @endcan
+                                @endauth
 
                             </div>
                         </div>
@@ -96,8 +102,16 @@
                     <a href="/contact" {!! request()->is('contact') ? 'aria-current="page"' : '' !!}
                         class="{{ request()->is('contact') ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white' }} block rounded-md px-3 py-2 text-base font-medium mt-2">Contact</a>
 
-                    <a href="/notes" {!! request()->is('notes') ? 'aria-current="page"' : '' !!}
-                        class="{{ request()->is('notes') ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white' }} block rounded-md px-3 py-2 text-base font-medium mt-2">Notes</a>
+                    @auth
+                        <a href="/notes" {!! request()->is('notes') ? 'aria-current="page"' : '' !!}
+                            class="{{ request()->is('notes') ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white' }} block rounded-md px-3 py-2 text-base font-medium mt-2">Notes</a>
+
+                        @can('admin-view')
+                            <a href="/dashboard" {!! request()->is('dashboard') ? 'aria-current="page"' : '' !!}
+                                class="{{ request()->is('dashboard') ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white' }} block rounded-md px-3 py-2 text-base font-medium mt-2">Dashboard</a>
+                        @endcan
+                    @endauth
+
                 </div>
             </el-disclosure>
         </nav>

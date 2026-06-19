@@ -17,6 +17,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/notes', DestroyNotesController::class); // Destroy All Notes.
 
     Route::delete('/logout', [AuthController::class, 'logout']);
+
+    Route::view('/dashboard', 'dashboard')
+        ->can('admin-view');
 });
 
 
