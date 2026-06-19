@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DestroyNotesController;
 use App\Http\Controllers\NoteController;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 
 // Routes Pages
@@ -20,6 +21,13 @@ Route::middleware('auth')->group(function () {
 
     Route::view('/dashboard', 'dashboard')
         ->can('admin-view');
+
+    // ::OR::
+
+    // Route::get('/dashboard', function () {
+    //     Gate::authorize('admin-view');
+    //     return view('dashboard');
+    // });
 });
 
 
@@ -33,5 +41,5 @@ Route::middleware('guest')->group(function () {
 
 // Route::
 Route::fallback(function () {
-    return view('404');
+    return view('errors.404');
 });

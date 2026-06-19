@@ -1,4 +1,4 @@
-<x-layout title="about">
+<x-layout title="Forbidden">
 
     <x-slot:heading>
         Error page
