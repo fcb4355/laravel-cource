@@ -14,7 +14,7 @@
                     <label for="email" class="block text-sm/6 font-medium text-gray-100">Email address</label>
                     <div class="mt-2">
                         <input id="email" type="email" name="email" autocomplete="email"
-                            class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                            class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6 @error('email') border border-red-600 @enderror"
                             placeholder="John@example.com" value="{{ old('email') }}" />
                     </div>
                     <x-error name="email"></x-error>
@@ -26,7 +26,7 @@
                     </div>
                     <div class="mt-2">
                         <input id="password" type="password" name="password" autocomplete="current-password"
-                            class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                            class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6 @error('password') border border-red-600 @enderror"
                             placeholder="********" />
                     </div>
                     <x-error name="password"></x-error>
